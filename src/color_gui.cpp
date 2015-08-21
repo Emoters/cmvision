@@ -57,7 +57,7 @@ bool ColorGuiApp::OnInit()
   ros::NodeHandle node_handle;
 
 	// Subscribe to an image stream
-	image_subscriber_ = node_handle.subscribe("image", 1, &ColorGuiApp::imageCB, this);
+	image_subscriber_ = node_handle.subscribe("stereo/left/image_rect_color", 1, &ColorGuiApp::imageCB, this);
 
   frame_ = new ColorGuiFrame();
   frame_->Show(true);
@@ -100,7 +100,7 @@ ColorGuiFrame::ColorGuiFrame()
   Connect(item->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ColorGuiFrame::OnQuit), NULL, this);
 
   menuBar->Append( file_menu, _("&File") );
-  
+
   SetMenuBar( menuBar );
 
   CreateStatusBar();
@@ -303,7 +303,7 @@ void ColorGuiFrame::OnClick(wxMouseEvent &event)
   vision_->setThreshold(0, y_low, y_high, u_low, u_high, v_low, v_high);
 
   std::ostringstream stream;
-  stream << y_low << ":" << y_high << ", " 
+  stream << y_low << ":" << y_high << ", "
          << u_low << ":" << u_high << ", "
          << v_low << ":" << v_high;
 

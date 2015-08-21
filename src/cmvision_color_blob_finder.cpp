@@ -91,7 +91,7 @@ bool CMVisionColorBlobFinder::initialize(ros::NodeHandle &node_handle)
 	}
 
 	// Subscribe to an image stream
-	image_subscriber_ = node_handle.subscribe("image", 1, &CMVisionColorBlobFinder::imageCB, this);
+	image_subscriber_ = node_handle.subscribe("stereo/left/image_rect_color", 1, &CMVisionColorBlobFinder::imageCB, this);
 
 	// Advertise our blobs
 	blob_publisher_ = node_handle.advertise<cmvision::Blobs> ("blobs", 1);
@@ -121,7 +121,7 @@ void CMVisionColorBlobFinder::imageCB(const sensor_msgs::ImageConstPtr& msg)
         cv_bridge::CvImagePtr image = cv_bridge::toCvCopy(msg);
         cvImageRef = IplImage(image->image);
         cvImage = &cvImageRef;
-        
+
 	size = cvGetSize(cvImage);
 
 	// this shouldn't change often

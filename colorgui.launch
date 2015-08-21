@@ -25,16 +25,5 @@
     <param name="frame_id" type="string" value="left_camera" />
   </node>
 
-  <node name="cmvision" pkg="cmvision" type="cmvision" args="image:=stereo/left/image_rect_color" 
-        output="screen">
-    <param name="color_file" type="string" value="$(find cmvision)/colors.txt" />
-    <param name="mean_shift_on" value="false" />
-    <param name="color_radius_pix" value="0" />
-    <param name="spatial_radius_pix" value="0" />
-    <param name="debug_on" value="true" />
-    <param name="cmvision/color_cal_on" type="bool" value="false"/>
-    <param name="cmvision/mean_shift_on" type="bool" value="false"/>
-    <param name="cmvision/spatial_radius_pix" type="double" value="2.0"/>
-    <param name="cmvision/color_radius_pix" type="double" value="40.0"/>
-  </node>
+  <node name="colorgui" pkg="cmvision" type="colorgui" respawn="false" output="screen" />
 </launch>
