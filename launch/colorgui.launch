@@ -1,0 +1,5 @@
+<launch>
+  <include file="$(find uvc_camera)/launch/stereo_image_proc.launch" />
+
+  <node name="colorgui" pkg="cmvision" type="colorgui" respawn="false" output="screen" />
+</launch>
