@@ -66,7 +66,7 @@ install(TARGETS cmvision colorgui
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
-install(DIRECTORY config launch
+install(DIRECTORY config launch scripts
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
 
