@@ -57,7 +57,7 @@ bool ColorGuiApp::OnInit()
   ros::NodeHandle node_handle;
 
 	// Subscribe to an image stream
-	image_subscriber_ = node_handle.subscribe("stereo/left/image_rect_color", 1, &ColorGuiApp::imageCB, this);
+	image_subscriber_ = node_handle.subscribe("stereo/right/image_rect_color", 1, &ColorGuiApp::imageCB, this);
 
   frame_ = new ColorGuiFrame();
   frame_->Show(true);
