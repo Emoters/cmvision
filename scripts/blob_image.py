@@ -44,7 +44,7 @@ class blob_listener():
                     self.draw_rect(blob.x, blob.y, (blob.top-blob.bottom), (blob.right-blob.left))
     
     def draw_rect(self, x, y, h, w):
-        cv2.rectangle(self.image_cv, (x, y), (x+w, y+h), (0, 255, 0), 2)
+        cv2.rectangle(self.image_cv, (x-w/2, y-h/2), (x+w/2, y+h/2), (0, 255, 0), 2)
         self.image_pub.publish(self.bridge.cv2_to_imgmsg(self.image_cv, "bgr8"))
 
 if __name__ == '__main__':
