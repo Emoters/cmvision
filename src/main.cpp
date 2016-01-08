@@ -26,7 +26,7 @@
 int main( int argc, char **argv)
 {
   ros::init(argc, argv, "cmvision");
-  ros::NodeHandle node_handle;
+  ros::NodeHandle node_handle("~");
 
   color_blob_track::CMVisionColorBlobFinder cmvision;
   if(!cmvision.initialize(node_handle))

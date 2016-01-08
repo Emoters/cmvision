@@ -49,7 +49,7 @@ CMVisionColorBlobFinder::~CMVisionColorBlobFinder()
 
 bool CMVisionColorBlobFinder::initialize(ros::NodeHandle &node_handle)
 {
-
+    std::string image_topic;
 	uyvy_image_ = NULL;
 	width_ = 0;
 	height_ = 0;
@@ -60,38 +60,23 @@ bool CMVisionColorBlobFinder::initialize(ros::NodeHandle &node_handle)
 	blob_message_.blob_count = 0;
 
 	// Get the color file. This defines what colors to track
-	if (!node_handle.getParam("/cmvision/color_file", color_filename_))
+	if (!node_handle.getParam("color_file", color_filename_))
 	{
-		ROS_ERROR("Could not find color calibration file name \"/cmvision/color_file\" in namespace: %s.", node_handle.getNamespace().c_str());
+		ROS_ERROR("Could not find color calibration file name \"color_file\" in namespace: %s.", node_handle.getNamespace().c_str());
 		return false;
 	}
 
 	// Get the level of debug output
-	node_handle.param("/cmvision/debug_on", debug_on_, false);
+	node_handle.param("debug_on", debug_on_, false);
 
-	// check whether mean shift is turned on
-	if (!node_handle.getParam("/cmvision/mean_shift_on", mean_shift_on_))
-	{
-		ROS_ERROR("Could not find mean shift flag \"/cmvision/mean_shift_on\" in namespace: %s.", node_handle.getNamespace().c_str());
-		return false;
-	}
-	else
-	{
-		if (!node_handle.getParam("/cmvision/spatial_radius_pix", spatial_radius_))
-		{
-			ROS_ERROR("Could not get spatial_radius_pix from param server \"/cmvision/spatial_radius_pix\" in namespace: %s.", node_handle.getNamespace().c_str());
-			return false;
-		}
-
-		if (!node_handle.getParam("/cmvision/color_radius_pix", color_radius_))
-		{
-			ROS_ERROR("Could not get color_radius_pix from param server \"/cmvision/color_radius_pix\" in namespace: %s.", node_handle.getNamespace().c_str());
-			return false;
-		}
-	}
+	// load params with defaults
+    node_handle.param("mean_shift_on", mean_shift_on_, false);
+    node_handle.param("spatial_radius_pix", spatial_radius_, 2.0);
+    node_handle.param("color_radius_pix", color_radius_, 40.0);
+    node_handle.param("image_topic", image_topic, std::string("stereo/left/image_rect_color"));
 
 	// Subscribe to an image stream
-	image_subscriber_ = node_handle.subscribe("stereo/left/image_rect_color", 1, &CMVisionColorBlobFinder::imageCB, this);
+	image_subscriber_ = node_handle.subscribe(image_topic, 1, &CMVisionColorBlobFinder::imageCB, this);
 
 	// Advertise our blobs
 	blob_publisher_ = node_handle.advertise<cmvision::Blobs> ("blobs", 1);

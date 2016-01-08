@@ -1,9 +1,10 @@
 <launch>
-  <include file="$(find cmvision)/launch/usb_cam.launch" />
+  <include file="$(find uvc_camera)/launch/stereo_image_proc.launch" />
 
-  <node name="cmvision" pkg="cmvision" type="cmvision" output="screen">
+  <node name="cmvision" pkg="cmvision" type="cmvision"
+        output="screen">
     <param name="color_file" type="string" value="$(find cmvision)/config/colors.txt" />
-    <param name="image_topic" type="string" value="/usb_cam/image_raw"/>
+    <param name="image_topic" type="string" value="/stereo/right/image_rect_color"/>
     <param name="color_radius_pix" type="double" value="40.0"/>
     <param name="spatial_radius_pix" type="double" value="2.0"/>
     <param name="debug_on" type="bool" value="false"/>

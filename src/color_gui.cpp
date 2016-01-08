@@ -49,15 +49,17 @@
 
 bool ColorGuiApp::OnInit()
 {
+  std::string image_topic;
   char **local_argv = new char*[ argc ];
   for (int i =0; i < argc; i++)
     local_argv[i] = strdup( wxString( argv[i] ).mb_str() );
 
   ros::init(argc, local_argv, "cmvision");
-  ros::NodeHandle node_handle;
-
-	// Subscribe to an image stream
-	image_subscriber_ = node_handle.subscribe("stereo/right/image_rect_color", 1, &ColorGuiApp::imageCB, this);
+  ros::NodeHandle node_handle("~");
+    
+  // Subscribe to an image stream
+  node_handle.param("image_topic", image_topic, std::string("stereo/left/image_rect_color"));
+  image_subscriber_ = node_handle.subscribe(image_topic, 1, &ColorGuiApp::imageCB, this);
 
   frame_ = new ColorGuiFrame();
   frame_->Show(true);
