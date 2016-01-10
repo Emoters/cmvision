@@ -629,6 +629,7 @@ void CMVision::clear()
   ZERO(region_count);
 
   ZERO(colors);
+  countColors = 0;
 
   map = NULL;
 }
@@ -702,12 +703,7 @@ bool CMVision::loadOptions(const char *filename)
   for(i=0; i<CMV_COLOR_LEVELS; i++){
     y_class[i] = u_class[i] = v_class[i] = 0;
   }
-  for(i=0; i<CMV_MAX_COLORS; i++){
-    if(colors[i].name){
-      delete(colors[i].name);
-      colors[i].name = NULL;
-    }
-  }
+  countColors = 0;
 
   // Loop ever lines, processing via a simple parser
   state = 0;
@@ -737,7 +733,7 @@ bool CMVision::loadOptions(const char *filename)
             c->color.red   = r;
             c->color.green = g;
             c->color.blue  = b;
-            c->name  = strdup(str);
+            strncpy(c->name, str, CMV_MAX_NAME);
             c->merge = merge;
 	    c->expected_num = exp_num;
             i++;
@@ -751,7 +747,7 @@ bool CMVision::loadOptions(const char *filename)
       case CMV_STATE_THRESH:
         n = sscanf(buf,"(%d:%d,%d:%d,%d:%d)",&y1,&y2,&u1,&u2,&v1,&v2);
         if(n == 6){
-          // printf("(%d:%d,%d:%d,%d:%d)\n",y1,y2,u1,u2,v1,v2);
+          //printf("(%d:%d,%d:%d,%d:%d)\n",y1,y2,u1,u2,v1,v2);
           if(i < CMV_MAX_COLORS){
             c = &colors[i];
             c->y_low = y1;  c->y_high = y2;
@@ -778,13 +774,15 @@ bool CMVision::loadOptions(const char *filename)
     printf("%08X %08X %08X\n",y_class[i],u_class[i],v_class[i]);
   }
   */
-
   fclose(in);
+  for(countColors=0; countColors<CMV_MAX_COLORS; countColors++){
+    if(!strlen(colors[countColors].name)) break;
+  }
 
   return(true);
 }
 
-bool CMVision::saveOptions(char *filename)
+bool CMVision::saveOptions(const char *filename)
 {
   color_info *c;
   FILE *out;
@@ -792,26 +790,22 @@ bool CMVision::saveOptions(char *filename)
 
   out = fopen(filename,"wt");
   if(!out) return(false);
-
+    
   fprintf(out,"[Colors]\n");
-  i = 0;
-  while(colors[i].name){
+  for (i=0;i<countColors;i++) {
     c = &colors[i];
     fprintf(out,"(%3d,%3d,%3d) %6.4f %d %s\n",
       c->color.red,c->color.green,c->color.blue,
       c->merge,c->expected_num,c->name);
-    i++;
   }
 
   fprintf(out,"\n[Thresholds]\n");
-  i = 0;
-  while(colors[i].name){
+  for (i=0;i<countColors;i++) {
     c = &colors[i];
     fprintf(out,"(%3d:%3d,%3d:%3d,%3d:%3d)\n",
       c->y_low,c->y_high,
       c->u_low,c->u_high,
       c->v_low,c->v_high);
-    i++;
   }
 
   fclose(out);
@@ -918,6 +912,23 @@ bool CMVision::setThreshold(int color,
 
   return(true);
 }
+
+int CMVision::getColorIndex(const char *szQuery)
+{
+    for (int iColor=0; iColor<countColors; iColor++)
+        if (0==strcmp(szQuery, colors[iColor].name))
+            return iColor;
+    return -1;
+}
+
+int CMVision::addColorinfo(color_info &info)
+{
+    if (countColors>=CMV_MAX_COLORS) return -1;
+    int iIdxNew = countColors++;
+    memcpy(&colors[iIdxNew], &info, sizeof(color_info));
+    return iIdxNew;
+}
+
 
 //==== Main Vision Functions =======================================//
 

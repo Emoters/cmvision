@@ -38,38 +38,62 @@
 
 class ColorGuiFrame : public wxFrame
 {
-  enum {ID_Reset=1};
+  enum {ID_Reset=1,ID_Undo,ID_Save};
 
   /// \brief Constructor
-  public: ColorGuiFrame();
+  public: ColorGuiFrame(const char *szConfigFile=NULL);
+
+  /// \brief timer called from app (don't block here)
+  public: void OnTimer(void);
 
   /// \brief Quit callback
   public: void OnQuit(wxCommandEvent &event);
 
   /// \brief Reset callback
   public: void OnReset(wxCommandEvent &event);
-
+    
+  /// \brief Save callback
+  public: void OnSave(wxCommandEvent &event);
+    
+  /// \brief Undo callback
+  public: void OnUndo(wxCommandEvent &event);
+    
   /// \brief On image click callback
   public: void OnClick(wxMouseEvent &event);
-
+    
   /// \brief Callback for zooming
   public: void OnMouseWheel(wxMouseEvent &event);
-
+  
+  /// \brief Callback for color combo change
+  public: void OnColorChange(wxCommandEvent &event);
+    
+  /// \brief Callback for enter in combo
+  public: void OnColorEnter(wxCommandEvent &event);
+    
   /// \brief Draw an image frame
   public: void DrawImage(const sensor_msgs::ImageConstPtr& msg);
-
+    
+  /// \brief fetch color from combo
+  protected: int getVisionColor(std::string *pRecvStr=NULL);
+    
   private: int width_, height_;
   private: wxTextCtrl *yuvText_;
   private: wxTextCtrl *rgbText_;
+  private: wxTextCtrl *colorIdx_;
+  private: wxComboBox *colorCombo_;
   private: wxPanel *image_panel_;
 
   private: unsigned char *rgb_image_;
   private: unsigned char *uyvy_image_;
+  private: std::string sConfigFile;
 
   private: int scale_pos_x_, scale_pos_y_;
   private: float scale_;
 
   private: CMVision *vision_;
+  private: int y_low_last, y_high_last, u_low_last, u_high_last, v_low_last, v_high_last;
+  private: std::string sStatus;
+  private: int iStatusCounter;
 };
 
 

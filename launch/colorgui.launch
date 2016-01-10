@@ -1,7 +1,10 @@
 <launch>
-  <include file="$(find cmvision)/launch/usb_cam.launch" />
+  <include file="$(find cmvision)/launch/usb_cam.launch" >
+    <arg name="viz" value="0" />
+  </include>
 
   <node name="colorgui" pkg="cmvision" type="colorgui" respawn="false" output="screen">
+    <param name="color_file" type="string" value="$(find cmvision)/config/colors.txt" />
     <param name="image_topic" type="string" value="/usb_cam/image_raw"/>
   </node>
 </launch>

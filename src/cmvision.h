@@ -66,6 +66,7 @@ Options File Format: (RGB merge name)
 
 #define CMV_COLOR_LEVELS  256
 #define CMV_MAX_COLORS     32
+#define CMV_MAX_NAME      256
 
 // sets tweaked optimal values for image size
 #define CMV_DEFAULT_WIDTH  320
@@ -138,7 +139,7 @@ public:
 
   struct color_info{
     rgb color;          // example color (such as used in test output)
-    char *name;         // color's meaninful name (e.g. ball, goal)
+    char name[CMV_MAX_NAME];   // color's meaninful name (e.g. ball, goal)
     double merge;       // merge density threshold
     int expected_num;   // expected number of regions (used for merge)
     int y_low,y_high;   // Y,U,V component thresholds
@@ -170,6 +171,7 @@ protected:
   rle rmap[CMV_MAX_RUNS];
 
   color_info colors[CMV_MAX_COLORS];
+  int countColors;
   int width,height;
   unsigned *map;
 
@@ -200,7 +202,7 @@ public:
 
   bool initialize(int nwidth,int nheight);
   bool loadOptions(const char *filename);
-  bool saveOptions(char *filename);
+  bool saveOptions(const char *filename);
   bool enable(unsigned opt);
   bool disable(unsigned opt);
   void close();
@@ -218,17 +220,21 @@ public:
   unsigned *getMap()
     {return(map);}
 
+  int getColorIndex(const char *szQuery);
   char *getColorName(int color)
     {return(colors[color].name);}
   rgb getColorVisual(int color)
     {return(colors[color].color);}
+  int numColors(void)
+    {return countColors;}
 
   color_info *getColorInfo(int color)
     {return(&colors[color]);}
   void getColorInfo(int color,color_info &info)
     {info = colors[color];}
   void setColorInfo(int color,color_info &info)
-    {colors[color] = info;}
+    {memcpy(&colors[color], &info, sizeof(color_info));}
+  int addColorinfo(color_info &info);
 
   bool processFrame(image_pixel *image);
   bool processFrame(unsigned *map);
