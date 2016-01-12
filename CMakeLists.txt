@@ -32,35 +32,45 @@ include_directories(${wxWidgets_INCLUDE_DIRS})
 
 find_package(OpenCV REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
+include_directories(src/cmvision)
 
-add_executable(cmvision
-	src/cmvision.cc
-	src/conversions.c
-	src/cmvision_color_blob_finder.cpp
-	src/main.cpp
+## Declare a cpp library
+add_library(${PROJECT_NAME} STATIC
+    src/cmvision/cmvision.h
+    src/cmvision/cmvision.cc
+    src/cmvision/capture.h
+    src/cmvision/conversions.h
+    src/cmvision/conversions.c
 )
-add_dependencies(cmvision
-  cmvision_gencpp
+add_dependencies(${PROJECT_NAME}
+    ${OpenCV_LIBRARIES}
 )
-target_link_libraries(cmvision 
-  ${catkin_LIBRARIES}
-  ${OpenCV_LIBRARIES}
+SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES LINKER_LANGUAGE CXX)
+
+# declare our main node
+add_executable(${PROJECT_NAME}_node
+	src/nodes/main.cpp
+    src/nodes/cmvision_color_blob_finder.h
+    src/nodes/cmvision_color_blob_finder.cpp
+)
+target_link_libraries(${PROJECT_NAME}_node
+    ${PROJECT_NAME}
+    ${catkin_LIBRARIES}
 )
 
 add_executable(colorgui
-	src/cmvision.cc
-	src/conversions.c
-	src/color_gui.cpp
+    src/nodes/color_gui.h
+    src/nodes/color_gui.cpp
 )
-target_link_libraries(colorgui 
-  fltk
-  ${catkin_LIBRARIES}
-  ${OpenCV_LIBRARIES}
-  ${wxWidgets_LIBRARIES}
+target_link_libraries(colorgui
+    fltk
+    ${PROJECT_NAME}
+    ${catkin_LIBRARIES}
+    ${wxWidgets_LIBRARIES}
 )
 
 # Mark executables and/or libraries for installation
-install(TARGETS cmvision colorgui
+install(TARGETS ${PROJECT_NAME}_node colorgui
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}

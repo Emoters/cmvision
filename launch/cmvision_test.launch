@@ -1,7 +1,7 @@
 <launch>
   <include file="$(find uvc_camera)/launch/stereo_image_proc.launch" />
 
-  <node name="cmvision" pkg="cmvision" type="cmvision" args="image:=stereo/right/image_rect_color" 
+  <node name="cmvision" pkg="cmvision" type="cmvision_node" args="image:=stereo/right/image_rect_color" 
         output="screen">
     <param name="color_file" type="string" value="$(find cmvision)/config/colors.txt" />
     <param name="mean_shift_on" value="true" />
