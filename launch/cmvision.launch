@@ -1,8 +1,9 @@
 <launch>
+  <arg name="color_file" default="$(find cmvision)/config/colors.txt" />
   <include file="$(find cmvision)/launch/usb_cam.launch" />
 
   <node name="cmvision" pkg="cmvision" type="cmvision" output="screen">
-    <param name="color_file" type="string" value="$(find cmvision)/config/colors.txt" />
+    <param name="color_file" type="string" value="$(arg color_file)" />
     <param name="image_topic" type="string" value="/usb_cam/image_raw"/>
     <param name="color_radius_pix" type="double" value="40.0"/>
     <param name="spatial_radius_pix" type="double" value="2.0"/>
